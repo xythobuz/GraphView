@@ -326,7 +326,8 @@ abstract public class GraphView extends LinearLayout {
 		// rect
 		paint.setARGB(180, 100, 100, 100);
 		float legendHeight = (shapeSize+5)*graphSeries.size() +5;
-		float lLeft = width-legendWidth - 10;
+		//float lLeft = width-legendWidth - 10;
+		float lLeft = 10;
 		float lTop;
 		switch (legendAlign) {
 		case TOP:
@@ -451,12 +452,7 @@ abstract public class GraphView extends LinearLayout {
 		}
 	}
 
-	/**
-	 * returns the maximal Y value of all data.
-	 *
-	 * warning: only override this, if you really know want you're doing!
-	 */
-	protected double getMaxY() {
+	private double getMaxYIntern() {
 		double largest;
 		if (manualYAxis) {
 			largest = manualMaxYValue;
@@ -504,12 +500,7 @@ abstract public class GraphView extends LinearLayout {
 		}
 	}
 
-	/**
-	 * returns the minimal Y value of all data.
-	 *
-	 * warning: only override this, if you really know want you're doing!
-	 */
-	protected double getMinY() {
+	private double getMinYIntern() {
 		double smallest;
 		if (manualYAxis) {
 			smallest = manualMinYValue;
@@ -523,6 +514,44 @@ abstract public class GraphView extends LinearLayout {
 			}
 		}
 		return smallest;
+	}
+	
+	/**
+	 * returns the minimal Y value of all data.
+	 *
+	 * warning: only override this, if you really know want you're doing!
+	 */
+	protected double getMinY() {
+		double a = getMinYIntern();
+		double b = getMaxYIntern();
+		if ((a < 0) && (b > 0)) {
+			if ((a * -1) > b) {
+				return a;
+			} else {
+				return b * -1;
+			}
+		} else {
+			return a;
+		}
+	}
+	
+	/**
+	 * returns the maximal Y value of all data.
+	 *
+	 * warning: only override this, if you really know want you're doing!
+	 */
+	protected double getMaxY() {
+		double a = getMinYIntern();
+		double b = getMaxYIntern();
+		if ((a < 0) && (b > 0)) {
+			if ((a * -1) > b) {
+				return a * -1;
+			} else {
+				return b;
+			}
+		} else {
+			return b;
+		}
 	}
 
 	public boolean isScrollable() {
